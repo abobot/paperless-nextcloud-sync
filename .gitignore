@@ -1,0 +1,6 @@
+# Docker Environment Files
+# these files typically contain sensitive informations such as email and passwords.
+
+*.env
+passwordreset.sql
+*.log
