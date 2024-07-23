@@ -24,3 +24,9 @@ services:
       LANGUAGE: de_DE.de
       LANG: de_DE.UTF-8
       TZ: Europe/Berlin
+    privileged: true
+    devices:
+      - "/dev/fuse"
+    logging:
+      options:
+        max-size: "10m"
