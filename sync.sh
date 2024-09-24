@@ -1,32 +1,17 @@
 #!/bin/bash
 
-# Overview on the script:
-# 0. Set variables and functions
-# 1. COMPARE source- and compare-structure for differences
-# 2. COPY NEW folders and files from source to webdrive, if existing
-# 3. REMOVE files and folders from webdrive, if necessary
-
 
 # Variables
 SOURCE_DIR="/mnt/source"
 COMPARE_DIR="/mnt/compare"
 WEBDRIVE_DIR="/mnt/webdrive"
-#DIFFERENCES="/tmp/differences-report.txt"
 FOLDER_CREATION_LIST="/tmp/folder-creation-list.txt"
 FOLDER_DELETATION_LIST="/tmp/folder-deletation-list.txt"
 COPY_LIST="/tmp/copy-list.txt"
 DELETE_LIST="/tmp/delete-list.txt"
 
 
-# Build the differences-report from "$SOURCE_DIR" and "$COMPARE_DIR"
-# rsync -avun --delete --iconv=iso-8859-1,utf-8 \
-#     "$SOURCE_DIR/" "$COMPARE_DIR/" | perl -ne 'print if /.*\.pdf$/' > "$DIFFERENCES"
-# rsync -avn --iconv=iso-8859-1,utf-8\
-#      --files-from="$DIFFERENCES" "$SOURCE_DIR/" "$WEBDRIVE_DIR/"
-# exit
-
-
-
+# Functions
 function find_different_folders () {
     # Compares each folder in path $1 to folders in path $2 and write different to result-list $3
     # $1=folder to search through
@@ -79,6 +64,8 @@ function find_differences_in_folders () {
         fi
     done
 }
+# ===== Functions END =====
+
 
 
 # determine folders to be created, and create them in webdrive if necessary
@@ -97,6 +84,7 @@ find_differences_in_folders $SOURCE_DIR $COMPARE_DIR $COPY_LIST newer
 
 if (( $(stat -c%s "$COPY_LIST") == 0 )); then echo "no file to copy"; fi
 
+IFS=$'\n'
 for FILE in $(cat $COPY_LIST); do
     cp "$SOURCE_DIR/$FILE" "$WEBDRIVE_DIR/$FILE" --verbose
 done
@@ -107,6 +95,7 @@ find_differences_in_folders $COMPARE_DIR $SOURCE_DIR $DELETE_LIST older
 
 if (( $(stat -c%s "$DELETE_LIST") == 0 )); then echo "no file to remove"; fi
 
+IFS=$'\n'
 for FILE in $(cat $DELETE_LIST); do
     if [[ ! $(cat $COPY_LIST) =~ $FILE ]]; then
         rm "$WEBDRIVE_DIR/$FILE" --verbose

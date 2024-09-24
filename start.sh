@@ -50,12 +50,3 @@ while true; do
   echo "-----------------------------------------------------------------------------"
   sleep 30s
 done
-
-# Start the cron jobs and display the Log to Docker
-echo "Start completed, starting cronjobs"
-echo "============================================================================="
-echo "the following cronjobs are configured:"
-crontab -l
-echo "-----------------------------------------------------------------------------"
-service cron start
-tail -f /var/log/cron.log
