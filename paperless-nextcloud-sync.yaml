@@ -1,17 +1,13 @@
 version: "3"
 
 services:
-  app:
+  nc-sync:
     image: paperless-nextcloud-sync
-    container_name: paperless-nextcloud-sync
     restart: unless-stopped
     volumes:
-      - '/media/myNextcloudDrive/Scans/Document_Library/documents/archive:/mnt/source:ro'
-      - '/media/myNextcloudDrive/nc_data/Scanner/files/Paperless_Archive:/mnt/compare:ro'
-      - '/home/docker_admin/paperless-nextcloud-sync/sync.sh:/usr/local/bin/sync.sh'
-      #- './ncsync/sync.sh:/usr/local/bin/sync.sh'
-      - '/home/docker_admin/paperless-nextcloud-sync/crontabs:/var/spool/cron/crontabs/root'
-      #- './ncsync/crontabs:/var/spool/cron/crontabs/root'
+      - '/mnt/data/paperless_data/Document_Library/documents/archive:/mnt/source:ro'
+      - '/mnt/data/nextcloud_data/Paperless/files/Paperless_archive:/mnt/compare:ro'
+      - './nc-sync/sync.sh:/usr/local/bin/sync.sh:ro'
     environment:
       WEBDRIVE_URL: $NEXTCLOUD_URL
       WEBDRIVE_USER: $NEXTCLOUD_USER
