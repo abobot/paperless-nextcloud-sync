@@ -50,9 +50,13 @@ mount -t davfs $WEBDRIVE_URL /mnt/webdrive \
 
 
 
-echo "[INFO] Start completed. Start filewatcher"
+echo "[INFO] Start completed. Start initital syncronization and filewatcher"
 echo "===================================================================================================="
 
+
+# initial synchronization, perfomed in background
+# this script prints output in container logs, when finished
+nohup bash sync.sh "$SOURCE_DIR" "$WEBDRIVE_DIR" &
 
 
 # setting up filewatcher and actions for for high-performance instant synchronization per-event

@@ -14,7 +14,7 @@ ENV LC_ALL=en_US.UTF-8
 RUN locale-gen "$LC_ALL"
 
 COPY ./start.sh /usr/local/bin
-#COPY ./sync.sh /usr/local/bin
+COPY ./sync.sh /usr/local/bin
 
 ENTRYPOINT [ "/usr/local/bin/start.sh" ]
 
