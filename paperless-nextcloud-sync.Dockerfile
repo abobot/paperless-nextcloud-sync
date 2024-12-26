@@ -1,7 +1,7 @@
 FROM ubuntu:latest
 
 RUN apt-get update \
-  && apt-get install -y davfs2 ca-certificates locales \
+  && apt-get install -y davfs2 ca-certificates locales inotify-tools \
   && mkdir -p /mnt/source \
   && mkdir -p /mnt/compare \
   && mkdir -p /mnt/webdrive \
@@ -14,7 +14,7 @@ ENV LANGUAGE=en_US:de
 ENV LC_ALL=en_US.UTF-8
 
 COPY ./start.sh /usr/local/bin
-COPY ./sync.sh /usr/local/bin
+#COPY ./sync.sh /usr/local/bin
 
 ENTRYPOINT [ "/usr/local/bin/start.sh" ]
 
