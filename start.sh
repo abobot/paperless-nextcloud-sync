@@ -1,11 +1,19 @@
 #!/bin/bash
 
+# Set local Variables for full UTF-8 support
+if [[ $LC_ALL != "en_US.UTF-8" ]]; then
+  locale-gen "${LC_ALL}"
+fi
+
 # Check mandatory veriables
 if [ -z ${WEBDRIVE_USER} ]; then
   echo "[FAILURE] Webdrive user is not set!"
   exit 1
 fi
 
+if [ -n "${WEBDRIVE_PASSWORD_FILE}" ]; then
+    WEBDRIVE_PASSWORD=$(read ${WEBDRIVE_PASSWORD_FILE})
+fi
 if [ -z ${WEBDRIVE_PASSWORD} ]; then
   echo "[FAILURE] Webdrive password is not set!"
   exit 1
@@ -16,7 +24,7 @@ if [ -z ${WEBDRIVE_URL} ]; then
   exit 1
 fi
 
-echo "$WEBDRIVE_URL $WEBDRIVE_USER $WEBDRIVE_PASSWORD" >> /etc/davfs2/secrets
+echo "$WEBDRIVE_URL $WEBDRIVE_USER $WEBDRIVE_PASSWORD" > /etc/davfs2/secrets
 
 # Set optional variables
 FOLDER_USER=${SYNC_USERID:-0}
@@ -26,16 +34,14 @@ ACCESS_FILE=${SYNC_ACCESS_FILE:-755}
 SOURCE_DIR="/mnt/source"
 WEBDRIVE_DIR="/mnt/webdrive"
 
-# Set local Variables
-locale-gen $LC_ALL
-
-
 # Create user
 if [ $FOLDER_USER -gt 0 ]; then
   useradd webdrive -u $FOLDER_USER -N -G $FOLDER_GROUP
 fi
 
 # Mount the webdav drive 
+echo "[INFO] WEBDRIVE_URL: $WEBDRIVE_URL"
+echo "[INFO] WEBDRIVE_USER: $WEBDRIVE_USER"
 if [ -f "/var/run/mount.davfs/mnt-webdrive.pid" ]; then
   rm /var/run/mount.davfs/mnt-webdrive.pid
 fi
