@@ -13,8 +13,10 @@ ENV LANGUAGE=en_US:de
 ENV LC_ALL=en_US.UTF-8
 RUN locale-gen "$LC_ALL"
 
-COPY *.sh /usr/local/bin/
+COPY *.sh /
 
-ENTRYPOINT [ "tini", "-g", "--", "/usr/local/bin/start.sh" ]
+ENTRYPOINT [ "tini", "-g", "--", "/start.sh" ]
+
+HEALTHCHECK --timeout=10s --start-period=10s CMD ["bash", "/healthcheck.sh"]
 
 # docker build --file ./paperless-nextcloud-sync.Dockerfile --tag paperless-nextcloud-sync .
