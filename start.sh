@@ -16,7 +16,7 @@ if [ -n "${WEBDRIVE_PASSWORD_FILE}" ]; then
 fi
 if [ -z ${WEBDRIVE_PASSWORD} ]; then
   echo "[FAILURE] Webdrive password is not set!"
-  exit 1
+    exit 1
 fi
 
 if [ -z ${WEBDRIVE_URL} ]; then
@@ -48,6 +48,18 @@ fi
 mount -t davfs $WEBDRIVE_URL /mnt/webdrive \
   -o uid=$FOLDER_USER,gid=$FOLDER_GROUP,dir_mode=$ACCESS_DIR,file_mode=$ACCESS_FILE
 
+
+# Trap signals (SIGTERM, SIGINT) and pass them to child processes
+function container_exit() {
+  SIGNAL=$1
+  echo "[WARNING] Received $SIGNAL, ending processes..."
+  while $(kill -$SIGNAL $(jobs -p) 2>/dev/null); do
+    sleep 3
+  done
+  wait
+}
+trap "container_exit SIGTERM" SIGTERM
+trap "container_exit SIGINT" SIGINT
 
 
 echo "[INFO] Start completed. Start initital syncronization and filewatcher"
@@ -95,4 +107,5 @@ while IFS='|' read -r event full_path filename; do
       echo "Full path: $full_path"
       ;;
   esac
-done
+done &
+wait
