@@ -90,6 +90,14 @@ while IFS='|' read -r event full_path filename; do
       echo "[ACTION] Detected $event-Event - Deleting: $filename"
       rm "$WEBDRIVE_DIR/$RELATIVE_PATH" --verbose
       ;;
+    CREATE,ISDIR)
+      echo "[ACTION] Detected $event-Event - Creating directory: $RELATIVE_PATH"
+      mkdir "$WEBDRIVE_DIR/$RELATIVE_PATH" --verbose
+      ;;
+    DELETE,ISDIR)
+      echo "[ACTION] Detected $event-Event - Deleting directory: $RELATIVE_PATH"
+      rm -d "$WEBDRIVE_DIR/$RELATIVE_PATH" --verbose
+      ;;
     MOVED_FROM)
       echo "[INFO] Detected $event-Event - File moved: $RELATIVE_PATH"
       #OLD_PATH_LOCAL="$SOURCE_DIR/$RELATIVE_PATH"
