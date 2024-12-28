@@ -7,7 +7,7 @@ fi
 
 # Check mandatory veriables
 if [ -z ${WEBDRIVE_USER} ]; then
-  echo "[FAILURE] Webdrive user is not set!"
+  echo "[ERROR] Webdrive user is not set!"
   exit 1
 fi
 
@@ -15,12 +15,12 @@ if [ -n "${WEBDRIVE_PASSWORD_FILE}" ]; then
     WEBDRIVE_PASSWORD=$(read ${WEBDRIVE_PASSWORD_FILE})
 fi
 if [ -z ${WEBDRIVE_PASSWORD} ]; then
-  echo "[FAILURE] Webdrive password is not set!"
+  echo "[ERROR] Webdrive password is not set!"
     exit 1
 fi
 
 if [ -z ${WEBDRIVE_URL} ]; then
-  echo "[FAILURE] Webdrive url is not set!"
+  echo "[ERROR] Webdrive url is not set!"
   exit 1
 fi
 
@@ -45,8 +45,13 @@ echo "[INFO] WEBDRIVE_USER: $WEBDRIVE_USER"
 if [ -f "/var/run/mount.davfs/mnt-webdrive.pid" ]; then
   rm /var/run/mount.davfs/mnt-webdrive.pid
 fi
-mount -t davfs $WEBDRIVE_URL /mnt/webdrive \
-  -o uid=$FOLDER_USER,gid=$FOLDER_GROUP,dir_mode=$ACCESS_DIR,file_mode=$ACCESS_FILE
+mount -t davfs "$WEBDRIVE_URL" /mnt/webdrive \
+  -o uid="$FOLDER_USER",gid="$FOLDER_GROUP",dir_mode="$ACCESS_DIR",file_mode="$ACCESS_FILE"
+if [ $? -ne 0 ]; then
+  echo "[ERROR] Failed to mount $WEBDRIVE_URL"
+  echo "[ERROR] Please check your credentials or URL."
+  exit 1
+fi
 
 
 # Trap signals (SIGTERM, SIGINT) and pass them to child processes
