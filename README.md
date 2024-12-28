@@ -1,16 +1,35 @@
 # Paperless-ngx to Nextcloud Real-Time Synchronization via WebDAV
 
-<!-- Purpose of this repository and its offerings
-Synchronization **only in one direction!**
+I was looking for a seamless way to connect Paperless and Nextcloud (where the PDF files were previously stored). During my research, I tested several existing solutions, but they all had drawbacks that I found unacceptable. This project aims to meet the following **requirements**:
 
-Illustration of my setup for better understanding, based on `documentation\my-setup_diagram.drawio`.
+- Easy to configure and ready to use within minutes.
+- Supports synchronization with remote Nextcloud instances.
+- Created, deleted, or modified files should appear in Nextcloud's Activity Feed.
+- PDFs should be searchable within Nextcloud.
+- Changes should be synchronized as soon as possible.
 
+To achieve these goals, approaches like directly mounting the export directory to Nextcloud or connecting a Paperless stack to an FTP server proved unsuitable. As a result, I developed this custom Docker container. It uses WebDAV mounts to synchronize files and folders based on events.
+
+<details>
+<summary>Click here to see a graphical overview of the container's functionality:</summary>
+<img src="documentation\my-setup_diagram-1.drawio.svg"/>
+</details>
+
+> **Note**: Synchronization works in only one direction: **Paperless ➜ Nextcloud**. Since Paperless manages the data, any modifications to the export directory by Nextcloud could corrupt the Paperless instance.
+
+## Preparation
+<!-- Recommended actions to do on the Nextcloud side. -->
+
+
+<!-- 
 Additional information on related topics in my setup, such as Nextcloud settings, ProFTP for Nextcloud-to-Paperless file transfer, and mobile scanning, is available. -->
 
 
+<br>
 
 ## Installation and Setup
-1. Open the shell on the server where Paperless is running and execute: <br>
+As of today (2024-12-28) the docker image is not uploaded to GHCR and Docker Hub. This is on my bucket list, but for now, you need to clone this repository (1.) build it on your own (2.) in order to run it:
+1. Clone this repository using the shell on the server where Paperless is running. Execute: <br>
    ```
    git clone https://github.com/Flo-R1der/paperless-nextcloud-sync.git
    ```
@@ -18,7 +37,7 @@ Additional information on related topics in my setup, such as Nextcloud settings
    ```
    docker build --file ./paperless-nextcloud-sync.Dockerfile --tag paperless-nextcloud-sync .
    ```
-3. Add the container to your Paperless instance, preferably via **Docker Compose** or **[Portainer Stack](https://docs.portainer.io/user/docker/stacks/edit)**.
+3. Add the container to your Paperless instance, preferably via **[Docker Compose](https://docs.docker.com/compose/)** or **[Portainer Stack](https://docs.portainer.io/user/docker/stacks/edit)**.
     - You can use and edit the following block:
         ```yaml
         version: "3"
@@ -41,12 +60,16 @@ Additional information on related topics in my setup, such as Nextcloud settings
         > **Note**: `privileged: true` and `devices: "/dev/fuse"` are mandatory for WebDAV mounts.
 
     - Fill in the `WEBDRIVE_URL`, `WEBDRIVE_USER`, and `WEBDRIVE_PASSWORD` values.
-        - Optional: Use the environment variable `WEBDRIVE_PASSWORD_FILE` instead of `WEBDRIVE_PASSWORD` if you want to utilize Docker secrets.
+        - **Video**: [How to find WebDAV url in Nextcloud](https://www.youtube.com/watch?v=D1JU9vogekU)
+        - **Video**: [How to create an app password in Nextcloud](https://www.youtube.com/watch?v=HQZyzlo82G4) - This is mandatory, if **Two-Factor-Authentication** is enabled for the Account you want to use! Otherwise, you can use the usual account password.
+        - Optional: Use the environment variable `WEBDRIVE_PASSWORD_FILE` instead of `WEBDRIVE_PASSWORD` if you want to utilize [Docker secrets](https://docs.docker.com/compose/how-tos/use-secrets/).
         - Optional: Define mounting options using `FOLDER_USER`, `FOLDER_GROUP`, `ACCESS_DIR`, and `ACCESS_FILE`. This can be useful if you also want the WebDAV drive mapped to a mount point on the Docker host.
+        - The image is build with `LC_ALL=en_US.UTF-8`. For the most occasions this should be suitable and you can delete that line from the config file above. Otherwise, set it to any value from [this table](https://docs.oracle.com/cd/E23824_01/html/E26033/glset.html#glscx).
+
 
     - Restart the Paperless instance to activate the container.
 
-4. Verify the container is running and check the container logs:
+4. Verify if the container is running and check the container logs:
     - Use `docker logs --follow <container-name>` (replace `<container-name>` with your container's name) or utilize the [Portainer Log Viewer](https://docs.portainer.io/user/docker/containers/logs).
 
         <details>
@@ -54,32 +77,31 @@ Additional information on related topics in my setup, such as Nextcloud settings
         <img src="documentation\container-logs_short-example.png" width=680px/>
         </details>
 
-        Alternatively, compare the output to the more detailed <a href="documentation\container-logs_example.txt">log example</a>, if necessary.
+        Alternatively: compare the output to the more detailed <a href="documentation\container-logs_example.txt">log example</a>, if necessary.
 
-
+<br>
 
 ## Startup
 On the first run, always inspect the container logs. The logs should include the following:
 1. The container sets locales if `LC_ALL` is configured with a value other than `en_US.UTF-8`. This ensures support for non-ASCII characters in filenames.
 2. The container validates mandatory environment variables (`WEBDRIVE_URL`, `WEBDRIVE_USER`, `WEBDRIVE_PASSWORD`). If any are missing, the container exits with code 1.
 3. If configured correctly, the WebDAV drive (Nextcloud) is mounted via `davfs`. Errors during mounting will stop the container with exit code 1.
-4. Upon successful mounting:
-    - **Initial synchronization** and **file-watcher** are started to detect changes and keep Nextcloud synchronized with Paperless.
+4. Upon successful mounting: The **Initial synchronization** and **file-watcher** are started to detect changes and keep Nextcloud synchronized with Paperless.
 
-        <details>
-        <summary>Technical details post-WebDAV mount</summary>
+    <details>
+    <summary>Technical details: after WebDAV is mounted</summary>
 
-        - Sets a `trap` to unmount the drive properly when a stop signal is received.
-        - Initiates `sync.sh` for initial synchronization to update Nextcloud in the background.
-            > **Note**: While `rsync` could achieve similar results, it has caused file deletions during initial synchronization in my tests. My script avoids this issue, though some errors are still logged. Please share any better solutions!
-        - Configures a file watcher to monitor changes by Paperless:
-            - **CREATE**: Copies new files/folders from Paperless to Nextcloud.
-            - **MODIFY**: Updates files in Nextcloud, creating new document versions (e.g., rotated pages, new OCR runs, etc.).
-            - **DELETE**: Deletes corresponding files in Nextcloud.
-            - **MOVED_FROM** and **MOVED_TO**: Handles file renaming or moving, using paths provided in these events.
-        </details>
+    - Sets a `trap` to unmount the drive properly when a stop signal is received.
+    - Initiates `sync.sh` for initial synchronization to update Nextcloud in the background.
+        > **Note**: While `rsync` could achieve similar results, it has caused file deletions during initial synchronization in my tests. My script avoids this issue, though some errors are still logged. Please share any better solutions!
+    - Configures the file watcher `inotifywait` to monitor changes by Paperless:
+        - **CREATE**: Copies new files/folders from Paperless to Nextcloud.
+        - **MODIFY**: Updates files in Nextcloud, creating new document versions (e.g., rotated pages, new OCR runs, etc.).
+        - **DELETE**: Deletes corresponding files in Nextcloud.
+        - **MOVED_FROM** and **MOVED_TO**: Handles file renaming or moving, using paths provided in these events.
+    </details>
 
-
+<br>
 
 ## Expected Results
 1. When started, the **health check** verifies WebDAV mounting and file watcher operation. If successful, the container is marked **healthy**.
@@ -100,7 +122,10 @@ On the first run, always inspect the container logs. The logs should include the
 
         Alternative: Refer to the detailed <a href="documentation\container-logs_example.txt">log example</a>, if necessary. For this example also take into account the technical details in point 4 from the Startup section.
 
+3. If you are creating Documents in Paperless, they will be transferred to your Nextcloud immediately and appear as created, deleted, or modified files in Nextcloud's Activity Feed:
+![Nextcloud's Activity Feed](documentation\nextcloud-activity_example.png)
 
+<br>
 
 ## Open Topics
 - Replace initial synchronization with a better solution. My tests with `rsync` caused file deletions during synchronization, which my script avoids but still produces error messages (see [log example](documentation\container-logs_example.txt), lines 20-24). **Please open issues only if you have a suitable solution!**
