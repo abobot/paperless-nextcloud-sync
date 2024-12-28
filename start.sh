@@ -75,7 +75,7 @@ nohup bash sync.sh "$SOURCE_DIR" "$WEBDRIVE_DIR" &
 # supports renaming and file-move, to preserve existing files in nextcloud (instead of delete+recreate)
 inotifywait -m -r -e modify,create,delete,move "$SOURCE_DIR" --format '%e|%w%f|%f' |
 while IFS='|' read -r event full_path filename; do
-  RELATIVE_PATH="${full_path/${SOURCE_DIR}/''}"
+  RELATIVE_PATH="${full_path/${SOURCE_DIR}\//''}"
   case "$event" in
     MODIFY|CREATE)
       echo "[ACTION] Detected $event-Event - Copying: $filename"
@@ -86,12 +86,12 @@ while IFS='|' read -r event full_path filename; do
       rm "$WEBDRIVE_DIR/$RELATIVE_PATH" --verbose
       ;;
     MOVED_FROM)
-      echo "[INFO] Detected $event-Event - File moved: $filename"
+      echo "[INFO] Detected $event-Event - File moved: $RELATIVE_PATH"
       #OLD_PATH_LOCAL="$SOURCE_DIR/$RELATIVE_PATH"
       OLD_PATH_WEBDRIVE="$WEBDRIVE_DIR/$RELATIVE_PATH"
       ;;
     MOVED_TO)
-      echo "[ACTION] Detected $event-Event - File moved: $filename"
+      echo "[ACTION] Detected $event-Event - File moved: $RELATIVE_PATH"
       #NEW_PATH_LOCAL="$SOURCE_DIR/$RELATIVE_PATH"
       NEW_PATH_WEBDRIVE="$WEBDRIVE_DIR/$RELATIVE_PATH"
       if [[ -n "$OLD_PATH_WEBDRIVE" ]]; then

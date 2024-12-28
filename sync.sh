@@ -75,11 +75,13 @@ find_different_folders $SOURCE_DIR $WEBDRIVE_DIR $FOLDER_CREATION_LIST
 
 if (( $(stat -c%s "$FOLDER_CREATION_LIST") == 0 )); then
     echo "no folder to create" >> "$Logfile"
+else
+    echo "Folder creation:"
 fi
 
 IFS=$'\n'
 for FOLDER in $(cat $FOLDER_CREATION_LIST); do
-    mkdir "$WEBDRIVE_DIR/$FOLDER" --verbose
+    mkdir "$WEBDRIVE_DIR/$FOLDER" --verbose >> "$Logfile"
 done
 
 
@@ -88,11 +90,13 @@ find_differences_in_folders $SOURCE_DIR $WEBDRIVE_DIR $COPY_LIST newer
 
 if (( $(stat -c%s "$COPY_LIST") == 0 )); then
     echo "no file to copy" >> "$Logfile"
+else
+    echo "File copy:"
 fi
 
 IFS=$'\n'
 for FILE in $(cat $COPY_LIST); do
-    cp "$SOURCE_DIR/$FILE" "$WEBDRIVE_DIR/$FILE" --verbose
+    cp "$SOURCE_DIR/$FILE" "$WEBDRIVE_DIR/$FILE" --verbose >> "$Logfile"
 done
 
 
@@ -101,12 +105,14 @@ find_differences_in_folders $WEBDRIVE_DIR $SOURCE_DIR $DELETE_LIST older
 
 if (( $(stat -c%s "$DELETE_LIST") == 0 )); then
     echo "no file to remove" >> "$Logfile"
+else
+    echo "File removal:"
 fi
 
 IFS=$'\n'
 for FILE in $(cat $DELETE_LIST); do
     if [[ ! $(cat $COPY_LIST) =~ $FILE ]]; then
-        rm "$WEBDRIVE_DIR/$FILE" --verbose
+        rm "$WEBDRIVE_DIR/$FILE" --verbose >> "$Logfile"
     fi
 done
 
@@ -116,12 +122,14 @@ find_different_folders $WEBDRIVE_DIR $SOURCE_DIR $FOLDER_DELETATION_LIST
 
 if (( $(stat -c%s "$FOLDER_DELETATION_LIST") == 0 )); then
     echo "no folder to remove" >> "$Logfile"
+else
+    echo "Folder removal:"
 fi
 
 IFS=$'\n'
 for FOLDER in $(cat $FOLDER_DELETATION_LIST); do
     if [[ ! $(cat $FOLDER_CREATION_LIST) =~ $FOLDER ]]; then
-        rm -d "$WEBDRIVE_DIR/$FOLDER" --verbose
+        rm -d "$WEBDRIVE_DIR/$FOLDER" --verbose >> "$Logfile"
     fi
 done
 
