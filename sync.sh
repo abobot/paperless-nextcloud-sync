@@ -5,8 +5,8 @@
 SOURCE_DIR="$1"
 WEBDRIVE_DIR="$2"
 Logfile="/var/log/initial_synchronization.log"
-FOLDER_CREATION_LIST="/tmp/folder-creation-list.txt"
-FOLDER_DELETATION_LIST="/tmp/folder-deletation-list.txt"
+DIRECTORY_CREATION_LIST="/tmp/directory-creation-list.txt"
+DIRECTORY_DELETATION_LIST="/tmp/directory-deletation-list.txt"
 COPY_LIST="/tmp/file-copy-list.txt"
 DELETE_LIST="/tmp/file-delete-list.txt"
 
@@ -14,12 +14,12 @@ echo > "$Logfile"
 
 
 # Functions
-function find_different_folders () {
-    # Compares each folder in path $1 to folders in path $2 and write different to result-list $3
-    # $1=folder to search through
-    # $2=folder to campare with
+function find_different_directories () {
+    # Compares each directory in path $1 to directories in path $2 and write different to result-list $3
+    # $1=directory to search through
+    # $2=directory to campare with
     # $3=result-list (only differents)
-    # example: find_different_folders $SOURCE_DIR $WEBDRIVE_DIR $FOLDER_CREATION_LIST
+    # example: find_different_directories $SOURCE_DIR $WEBDRIVE_DIR $DIRECTORY_CREATION_LIST
     find "$1" -type d -not -path '*/lost+found' | \
     while read -r src_dir; do
         dst_dir="${2}${src_dir#$1}"
@@ -32,14 +32,14 @@ function find_different_folders () {
     done
 }
 
-function find_differences_in_folders () {
+function find_differences_in_directories () {
     # Compares each file in path $1 to files in path $2 and write different to result-list $3
     # the compare logic can be defined in $4: newer/older/identical
-    # $1=folder to search through
-    # $2=folder to campare with
+    # $1=directory to search through
+    # $2=directory to campare with
     # $3=result-list (only differents)
     # $4=compare-file is allowed to be: newer/older/identical
-    # example: find_differences_in_folders $SOURCE_DIR $WEBDRIVE_DIR $COPY_LIST newer
+    # example: find_differences_in_directories $SOURCE_DIR $WEBDRIVE_DIR $COPY_LIST newer
     find "$1" -type f -not -name '.*' | \
     while read -r src_file; do
         dst_file="${2}${src_file#$1}"
@@ -70,23 +70,23 @@ function find_differences_in_folders () {
 
 
 
-# determine folders to be created, and create them in webdrive if necessary
-find_different_folders $SOURCE_DIR $WEBDRIVE_DIR $FOLDER_CREATION_LIST
+# determine directories to be created, and create them in webdrive if necessary
+find_different_directories $SOURCE_DIR $WEBDRIVE_DIR $DIRECTORY_CREATION_LIST
 
-if (( $(stat -c%s "$FOLDER_CREATION_LIST") == 0 )); then
-    echo "no folder to create" >> "$Logfile"
+if (( $(stat -c%s "$DIRECTORY_CREATION_LIST") == 0 )); then
+    echo "no directory to create" >> "$Logfile"
 else
     echo "Folder creation:"
 fi
 
 IFS=$'\n'
-for FOLDER in $(cat $FOLDER_CREATION_LIST); do
-    mkdir "$WEBDRIVE_DIR/$FOLDER" --verbose >> "$Logfile"
+for DIRECTORY in $(cat $DIRECTORY_CREATION_LIST); do
+    mkdir "$WEBDRIVE_DIR/$DIRECTORY" --verbose >> "$Logfile"
 done
 
 
 # determine files to be copied, and copy them to webdrive if necessary
-find_differences_in_folders $SOURCE_DIR $WEBDRIVE_DIR $COPY_LIST newer
+find_differences_in_directories $SOURCE_DIR $WEBDRIVE_DIR $COPY_LIST newer
 
 if (( $(stat -c%s "$COPY_LIST") == 0 )); then
     echo "no file to copy" >> "$Logfile"
@@ -101,7 +101,7 @@ done
 
 
 # determine files to be deleted, and delete them in webdrive if necessary
-find_differences_in_folders $WEBDRIVE_DIR $SOURCE_DIR $DELETE_LIST older
+find_differences_in_directories $WEBDRIVE_DIR $SOURCE_DIR $DELETE_LIST older
 
 if (( $(stat -c%s "$DELETE_LIST") == 0 )); then
     echo "no file to remove" >> "$Logfile"
@@ -117,27 +117,27 @@ for FILE in $(cat $DELETE_LIST); do
 done
 
 
-# determine folder to be deleted, and delete them in webdrive if necessary
-find_different_folders $WEBDRIVE_DIR $SOURCE_DIR $FOLDER_DELETATION_LIST
+# determine directory to be deleted, and delete them in webdrive if necessary
+find_different_directories $WEBDRIVE_DIR $SOURCE_DIR $DIRECTORY_DELETATION_LIST
 
-if (( $(stat -c%s "$FOLDER_DELETATION_LIST") == 0 )); then
-    echo "no folder to remove" >> "$Logfile"
+if (( $(stat -c%s "$DIRECTORY_DELETATION_LIST") == 0 )); then
+    echo "no directory to remove" >> "$Logfile"
 else
     echo "Folder removal:"
 fi
 
 IFS=$'\n'
-for FOLDER in $(cat $FOLDER_DELETATION_LIST); do
-    if [[ ! $(cat $FOLDER_CREATION_LIST) =~ $FOLDER ]]; then
-        rm -d "$WEBDRIVE_DIR/$FOLDER" --verbose >> "$Logfile"
+for DIRECTORY in $(cat $DIRECTORY_DELETATION_LIST); do
+    if [[ ! $(cat $DIRECTORY_CREATION_LIST) =~ $DIRECTORY ]]; then
+        rm -d "$WEBDRIVE_DIR/$DIRECTORY" --verbose >> "$Logfile"
     fi
 done
 
 
 
 # cleanup
-rm $FOLDER_CREATION_LIST
-rm $FOLDER_DELETATION_LIST
+rm $DIRECTORY_CREATION_LIST
+rm $DIRECTORY_DELETATION_LIST
 rm $COPY_LIST
 rm $DELETE_LIST
 

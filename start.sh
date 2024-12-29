@@ -27,16 +27,16 @@ fi
 echo "$WEBDRIVE_URL $WEBDRIVE_USER $WEBDRIVE_PASSWORD" > /etc/davfs2/secrets
 
 # Set optional variables
-FOLDER_USER=${SYNC_USERID:-0}
-FOLDER_GROUP=${SYNC_GROUPID:-0}
+DIR_USER=${SYNC_USERID:-0}
+DIR_GROUP=${SYNC_GROUPID:-0}
 ACCESS_DIR=${SYNC_ACCESS_DIR:-755}
 ACCESS_FILE=${SYNC_ACCESS_FILE:-755}
 SOURCE_DIR="/mnt/source"
 WEBDRIVE_DIR="/mnt/webdrive"
 
 # Create user
-if [ $FOLDER_USER -gt 0 ]; then
-  useradd webdrive -u $FOLDER_USER -N -G $FOLDER_GROUP
+if [ $DIR_USER -gt 0 ]; then
+  useradd webdrive -u $DIR_USER -N -G $DIR_GROUP
 fi
 
 # Mount the webdav drive 
@@ -46,7 +46,7 @@ if [ -f "/var/run/mount.davfs/mnt-webdrive.pid" ]; then
   rm /var/run/mount.davfs/mnt-webdrive.pid
 fi
 mount -t davfs "$WEBDRIVE_URL" /mnt/webdrive \
-  -o uid="$FOLDER_USER",gid="$FOLDER_GROUP",dir_mode="$ACCESS_DIR",file_mode="$ACCESS_FILE"
+  -o uid="$DIR_USER",gid="$DIR_GROUP",dir_mode="$ACCESS_DIR",file_mode="$ACCESS_FILE"
 if [ $? -ne 0 ]; then
   echo "[ERROR] Failed to mount $WEBDRIVE_URL"
   echo "[ERROR] Please check your credentials or URL."
