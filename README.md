@@ -15,13 +15,16 @@ To achieve these goals, approaches like directly mounting the export directory t
 
 ![](documentation/my-setup_diagram-1.drawio.svg)
 </details>
+<br>
 
 > **Note**: Synchronization works in only one direction: **Paperless ➜ Nextcloud**. Since Paperless manages the data, any modifications to the export directory by Nextcloud could corrupt the Paperless instance.
+
+> **INFO**: You are interested how I upload my Scans from my network-scanner or mobile device (even remotely), you can also take a look into my [short summary for pdf upload](readme_ftp-upload.md).
 
 ## Preparation
 
 ### User and Share Settings
-For WebDAV synchronization, it is recommended to use a dedicated account, if possible. This account should be linked to the synchronization container with read-write permissions and configured to share the synchronized files with other users or groups with read-only permissions. This ensures that no changes are made to the PDF files and makes it easier to trace which files are controlled by Paperless.  
+For WebDAV synchronization, it is recommended to use a **dedicated account**, if possible. This account should be linked to the synchronization container with (effectively with read-write permissions) and configured to share the synchronized files with other users or groups with **read-only permissions**. This ensures that no changes are made to the PDF files and makes it easier to trace which files are controlled by Paperless.  
 To create a new user, log in as an administrator, navigate to the User Administration, and follow [the official guide](https://docs.nextcloud.com/server/latest/admin_manual/configuration_user/user_configuration.html#creating-a-new-user).
 
 <details>
