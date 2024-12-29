@@ -1,5 +1,23 @@
 # Paperless-ngx to Nextcloud Real-Time Synchronization via WebDAV
 
+This Docker image mounts a remote WebDAV source and synchronizes the data from `/mnt/source` to the mounted WebDAV drive. It is specifically designed for Nextcloud but may also work with other cloud systems that use WebDAV.  
+
+The synchronization process is intended to be real-time and seamless. Once the WebDAV connection is successfully established, two mechanisms are employed:
+
+- **Bulk Migration**: Automatically initiated to transfer all existing files, that are not available or outdated at the target webdrive.
+- **File Watcher**: Enables real-time synchronization during runtime, handling the following operations:
+  - File/Folder creation
+  - File/Folder deletion
+  - File moves and renames
+  - File updates, creating new versions (e.g., rotated pages, new OCR runs, etc.)
+
+<br>
+
+❤ A special thanks to [efrecon](https://github.com/efrecon) / [docker-webdav-client](https://github.com/efrecon/docker-webdav-client) for providing the foundation for this project!
+
+<br>
+
+## Why this Project?
 I was looking for a seamless way to connect Paperless and Nextcloud. During my research, I tested several existing solutions, but they all had drawbacks that I found unacceptable. This project aims to meet the following **requirements**:
 
 - Easy to configure and ready to use within minutes.
@@ -42,7 +60,6 @@ During the initial synchronization, depending on the number of files being trans
     
     ![](documentation/nc-settings_log-reader.png)
     </details>
-    <br>
 
 2. Log in as an administrator, navigate to Administration Settings > Security (in the Administration section, not the Personal section), and **add the IP of your synchronization container** to the whitelist.
     <details>
@@ -139,7 +156,6 @@ On the first run, always inspect the container logs. The logs should include the
 
     ![](documentation/paperless-stack_portainer.png)
     </details>
-    <br>
 
 2. After successful startup (indicated in logs by a `=====` line):
     - The file watcher waits for events and synchronizes Nextcloud accordingly (refer to the technical details in point 4 from the Startup section).
