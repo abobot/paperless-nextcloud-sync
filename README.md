@@ -1,6 +1,6 @@
 # Paperless-ngx to Nextcloud Real-Time Synchronization via WebDAV
 
-This Docker image mounts a remote WebDAV source and synchronizes the data from `/mnt/source` to the mounted WebDAV drive. It is specifically designed for Nextcloud but may also work with other cloud systems that use WebDAV.  
+This Docker image mounts a remote WebDAV source and synchronizes the data from `/mnt/source` to the mounted WebDAV drive in real-time. It is specifically designed for Nextcloud but may also work with other cloud systems that use WebDAV.  
 
 The synchronization process is intended to be real-time and seamless. Once the WebDAV connection is successfully established, two mechanisms are employed:
 
@@ -38,6 +38,8 @@ To achieve these goals, approaches like directly mounting the export directory t
 > **Note**: Synchronization works in only one direction: **Paperless ➜ Nextcloud**. Since Paperless manages the data, any modifications to the export directory by Nextcloud could corrupt the Paperless instance.
 
 > **INFO**: You are interested how I upload my Scans from my network-scanner or mobile device (even remotely), you can also take a look into my [short summary for pdf upload](readme_ftp-upload.md).
+
+<br>
 
 ## Preparation
 
@@ -175,8 +177,8 @@ On the first run, always inspect the container logs. The logs should include the
 <br>
 
 ## Open Topics
-- Replace initial synchronization with a better solution. My tests with `rsync` caused file deletions during synchronization, which my script avoids but still produces error messages (see [log example](documentation/container-logs_example.txt), lines 20-24). **Please open issues only if you have a suitable solution!**
-- Publish Docker image on GHCR and Docker Hub.
+- [ ] Replace initial synchronization with a better solution. My tests with `rsync` caused file deletions during synchronization, which my script avoids but still produces error messages (see [log example](documentation/container-logs_example.txt), lines 20-24). **Please open issues only if you have a suitable solution!**
+- [ ] Publish Docker image on GHCR and Docker Hub.
 
 <br>
 
