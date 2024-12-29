@@ -1,6 +1,6 @@
 # Paperless-ngx to Nextcloud Real-Time Synchronization via WebDAV
 
-I was looking for a seamless way to connect Paperless and Nextcloud (where the PDF files were previously stored). During my research, I tested several existing solutions, but they all had drawbacks that I found unacceptable. This project aims to meet the following **requirements**:
+I was looking for a seamless way to connect Paperless and Nextcloud. During my research, I tested several existing solutions, but they all had drawbacks that I found unacceptable. This project aims to meet the following **requirements**:
 
 - Easy to configure and ready to use within minutes.
 - Supports synchronization with remote Nextcloud instances.
@@ -12,18 +12,43 @@ To achieve these goals, approaches like directly mounting the export directory t
 
 <details>
 <summary>Click here to see a graphical overview of the container's functionality:</summary>
-<img src="documentation\my-setup_diagram-1.drawio.svg"/>
+
+![](documentation/my-setup_diagram-1.drawio.svg)
 </details>
 
 > **Note**: Synchronization works in only one direction: **Paperless ➜ Nextcloud**. Since Paperless manages the data, any modifications to the export directory by Nextcloud could corrupt the Paperless instance.
 
 ## Preparation
-<!-- Recommended actions to do on the Nextcloud side. -->
 
+### User and Share Settings
+For WebDAV synchronization, it is recommended to use a dedicated account, if possible. This account should be linked to the synchronization container with read-write permissions and configured to share the synchronized files with other users or groups with read-only permissions. This ensures that no changes are made to the PDF files and makes it easier to trace which files are controlled by Paperless.  
+To create a new user, log in as an administrator, navigate to the User Administration, and follow [the official guide](https://docs.nextcloud.com/server/latest/admin_manual/configuration_user/user_configuration.html#creating-a-new-user).
 
-<!-- 
-Additional information on related topics in my setup, such as Nextcloud settings, ProFTP for Nextcloud-to-Paperless file transfer, and mobile scanning, is available. -->
+<details>
+<summary>Example Activity Feed</summary>
 
+![](documentation/nextcloud-activity_example.png)
+</details>
+
+### Brute-Force Settings
+During the initial synchronization, depending on the number of files being transferred, your container may be throttled by your Nextcloud instance. While this brute-force protection is a valuable security feature, it can cause issues during bulk file transfers. To address this, you can:
+
+1. Log in as an administrator, navigate to Administration Settings > Logging, click on Log Reader Settings, enable **Filter log level: Info**, and activate **Set log level: Info** to view throttled events in the log.
+    <details>
+    <summary>Screenshot: Log Settings</summary>
+    
+    ![](documentation/nc-settings_log-reader.png)
+    </details>
+    <br>
+
+2. Log in as an administrator, navigate to Administration Settings > Security (in the Administration section, not the Personal section), and **add the IP of your synchronization container** to the whitelist.
+    <details>
+    <summary>Screenshot: IP Address throttled and Brute-Force IP Whitelist</summary>
+
+    ![](documentation/nc-logs_ip-address-throttled.png)
+    ![](documentation/nc-settings_bruteforce-whitelist.png)
+    > **Note**: By whitelisting `172.0.0.0/8`, all IP addresses starting with `172.*` are included. These are typical Docker IP addresses. If you are using a public instance, consider the possibility of dynamic IP address changes. To calculate IP address masks accurately, an [IP Calculator](https://jodies.de/ipcalc) is recommended.
+    </details>
 
 <br>
 
@@ -74,10 +99,11 @@ As of today (2024-12-28) the docker image is not uploaded to GHCR and Docker Hub
 
         <details>
         <summary>Example screenshot</summary>
-        <img src="documentation\container-logs_short-example.png" width=680px/>
+
+        ![](documentation/container-logs_short-example.png)
         </details>
 
-        Alternatively: compare the output to the more detailed <a href="documentation\container-logs_example.txt">log example</a>, if necessary.
+        Alternatively: compare the output to the more detailed [log example](documentation/container-logs_example.txt), if necessary.
 
 <br>
 
@@ -107,7 +133,8 @@ On the first run, always inspect the container logs. The logs should include the
 1. When started, the **health check** verifies WebDAV mounting and file watcher operation. If successful, the container is marked **healthy**.
     <details>
     <summary>Portainer screenshot: Container is <b>started and healthy</b></summary>
-    <img src="documentation\paperless-stack_portainer.png" width=900px/>
+
+    ![](documentation/paperless-stack_portainer.png)
     </details>
     <br>
 
@@ -117,18 +144,19 @@ On the first run, always inspect the container logs. The logs should include the
     - Completion of initial synchronization is logged, enclosed by `-----` lines.
         <details>
         <summary>Example screenshot</summary>
-        <img src="documentation\container-logs_short-example.png" width=680px/>
+
+        ![](documentation/container-logs_short-example.png)
         </details>
 
-        Alternative: Refer to the detailed <a href="documentation\container-logs_example.txt">log example</a>, if necessary. For this example also take into account the technical details in point 4 from the Startup section.
+        Alternative: Refer to the detailed <a href="documentation/container-logs_example.txt">log example</a>, if necessary. For this example also take into account the technical details in point 4 from the Startup section.
 
 3. If you are creating Documents in Paperless, they will be transferred to your Nextcloud immediately and appear as created, deleted, or modified files in Nextcloud's Activity Feed:
-![Nextcloud's Activity Feed](documentation\nextcloud-activity_example.png)
+![Nextcloud's Activity Feed](documentation/nextcloud-activity_example.png)
 
 <br>
 
 ## Open Topics
-- Replace initial synchronization with a better solution. My tests with `rsync` caused file deletions during synchronization, which my script avoids but still produces error messages (see [log example](documentation\container-logs_example.txt), lines 20-24). **Please open issues only if you have a suitable solution!**
+- Replace initial synchronization with a better solution. My tests with `rsync` caused file deletions during synchronization, which my script avoids but still produces error messages (see [log example](documentation/container-logs_example.txt), lines 20-24). **Please open issues only if you have a suitable solution!**
 - Publish Docker image on GHCR and Docker Hub.
 
 <br>
