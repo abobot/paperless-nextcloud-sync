@@ -38,6 +38,8 @@ Synchronization is unidirectional (**Paperless ➔ Nextcloud**) to ensure Paperl
 
 ---
 
+<br>
+
 ## Installation and Setup
 
 ### Steps
@@ -79,7 +81,7 @@ Synchronization is unidirectional (**Paperless ➔ Nextcloud**) to ensure Paperl
    docker logs --follow <container-name>
    ```
 
-> **NOTE**: Are you struggling with this short description? [Read the full documentation.](https://github.com/Flo-R1der/paperless-nextcloud-sync/blob/main/documentation/README.md)
+> **NOTE**: Are you struggling with this short description? [Read the full documentation.](documentation/README.md)
 
 ### Container Start
 - The WebDAV drive will be mounted.
@@ -99,6 +101,8 @@ Synchronization is unidirectional (**Paperless ➔ Nextcloud**) to ensure Paperl
 ## Open Topics
 - [ ] Replace initial synchronization with a better solution. My tests with `rsync` caused file deletions during synchronization, which my script avoids but still produces error messages (see [log example](documentation/container-logs_example.txt), lines 20-24). **Please open issues only if you have a suitable solution!**
 - [ ] Publish Docker image on GHCR and Docker Hub.
+
+<br>
 
 ---
 
