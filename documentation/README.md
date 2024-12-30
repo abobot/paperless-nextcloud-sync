@@ -31,7 +31,7 @@ To achieve these goals, approaches like directly mounting the export directory t
 <details>
 <summary>Click here to see a graphical overview of the container's functionality:</summary>
 
-![](documentation/my-setup_diagram-1.drawio.svg)
+![](my-setup_diagram-1.drawio.svg)
 </details>
 <br>
 
@@ -50,7 +50,7 @@ To create a new user, log in as an administrator, navigate to the User Administr
 <details>
 <summary>Example Activity Feed</summary>
 
-![](documentation/nextcloud-activity_example.png)
+![](nextcloud-activity_example.png)
 </details>
 
 ### Brute-Force Settings
@@ -60,15 +60,15 @@ During the initial synchronization, depending on the number of files being trans
     <details>
     <summary>Screenshot: Log Settings</summary>
     
-    ![](documentation/nc-settings_log-reader.png)
+    ![](nc-settings_log-reader.png)
     </details>
 
 2. Log in as an administrator, navigate to Administration Settings > Security (in the Administration section, not the Personal section), and **add the IP of your synchronization container** to the whitelist.
     <details>
     <summary>Screenshot: IP Address throttled and Brute-Force IP Whitelist</summary>
 
-    ![](documentation/nc-logs_ip-address-throttled.png)
-    ![](documentation/nc-settings_bruteforce-whitelist.png)
+    ![](nc-logs_ip-address-throttled.png)
+    ![](nc-settings_bruteforce-whitelist.png)
     > **Note**: By whitelisting `172.0.0.0/8`, all IP addresses starting with `172.*` are included. These are typical Docker IP addresses. If you are using a public instance, consider the possibility of dynamic IP address changes. To calculate IP address masks accurately, an [IP Calculator](https://jodies.de/ipcalc) is recommended.
     </details>
 
@@ -122,10 +122,10 @@ As of today (2024-12-28) the docker image is not uploaded to GHCR and Docker Hub
         <details>
         <summary>Example screenshot</summary>
 
-        ![](documentation/container-logs_short-example.png)
+        ![](container-logs_short-example.png)
         </details>
 
-        Alternatively: compare the output to the more detailed [log example](documentation/container-logs_example.txt), if necessary.
+        Alternatively: compare the output to the more detailed [log example](container-logs_example.txt), if necessary.
 
 <br>
 
@@ -156,7 +156,7 @@ On the first run, always inspect the container logs. The logs should include the
     <details>
     <summary>Portainer screenshot: Container is <b>started and healthy</b></summary>
 
-    ![](documentation/paperless-stack_portainer.png)
+    ![](paperless-stack_portainer.png)
     </details>
 
 2. After successful startup (indicated in logs by a `=====` line):
@@ -166,18 +166,18 @@ On the first run, always inspect the container logs. The logs should include the
         <details>
         <summary>Example screenshot</summary>
 
-        ![](documentation/container-logs_short-example.png)
+        ![](container-logs_short-example.png)
         </details>
 
-        Alternative: Refer to the detailed <a href="documentation/container-logs_example.txt">log example</a>, if necessary. For this example also take into account the technical details in point 4 from the Startup section.
+        Alternative: Refer to the detailed [log example](container-logs_example.txt), if necessary. For this example also take into account the technical details in point 4 from the Startup section.
 
 3. If you are creating Documents in Paperless, they will be transferred to your Nextcloud immediately and appear as created, deleted, or modified files in Nextcloud's Activity Feed:
-![Nextcloud's Activity Feed](documentation/nextcloud-activity_example.png)
+![Nextcloud's Activity Feed](nextcloud-activity_example.png)
 
 <br>
 
 ## Open Topics
-- [ ] Replace initial synchronization with a better solution. My tests with `rsync` caused file deletions during synchronization, which my script avoids but still produces error messages (see [log example](documentation/container-logs_example.txt), lines 20-24). **Please open issues only if you have a suitable solution!**
+- [ ] Replace initial synchronization with a better solution. My tests with `rsync` caused file deletions during synchronization, which my script avoids but still produces error messages (see [log example](container-logs_example.txt), lines 20-24). **Please open issues only if you have a suitable solution!**
 - [ ] Publish Docker image on GHCR and Docker Hub.
 
 <br>
