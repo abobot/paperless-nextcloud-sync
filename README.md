@@ -36,9 +36,9 @@ Synchronization is unidirectional (**Paperless ➔ Nextcloud**) to ensure Paperl
 
 > **NOTE**: Are you struggling with this short description? [Read the full documentation.](documentation/README.md)
 
----
-
 <br>
+
+---
 
 ## Installation and Setup
 
