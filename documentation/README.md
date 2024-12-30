@@ -110,7 +110,7 @@ As of today (2024-12-28) the docker image is not uploaded to GHCR and Docker Hub
         - **Video**: [How to find WebDAV url in Nextcloud](https://www.youtube.com/watch?v=D1JU9vogekU)
         - **Video**: [How to create an app password in Nextcloud](https://www.youtube.com/watch?v=HQZyzlo82G4) - This is mandatory, if **Two-Factor-Authentication** is enabled for the Account you want to use! Otherwise, you can use the usual account password.
         - Optional: Use the environment variable `WEBDRIVE_PASSWORD_FILE` instead of `WEBDRIVE_PASSWORD` if you want to utilize [Docker secrets](https://docs.docker.com/compose/how-tos/use-secrets/).
-        - Optional: Define mounting options using `FOLDER_USER`, `FOLDER_GROUP`, `ACCESS_DIR`, and `ACCESS_FILE`. This can be useful if you also want the WebDAV drive mapped to a mount point on the Docker host.
+        - Optional: Define mounting options using `DIR_USER`, `DIR_GROUP`, `ACCESS_DIR`, and `ACCESS_FILE`. This can be useful if you also want the WebDAV drive mapped to a mount point on the Docker host.
         - The image is build with `LC_ALL=en_US.UTF-8`. For the most occasions this should be suitable and you can delete that line from the config file above. Otherwise, set it to any value from [this table](https://docs.oracle.com/cd/E23824_01/html/E26033/glset.html#glscx).
 
 
@@ -173,12 +173,6 @@ On the first run, always inspect the container logs. The logs should include the
 
 3. If you are creating Documents in Paperless, they will be transferred to your Nextcloud immediately and appear as created, deleted, or modified files in Nextcloud's Activity Feed:
 ![Nextcloud's Activity Feed](nextcloud-activity_example.png)
-
-<br>
-
-## Open Topics
-- [ ] Replace initial synchronization with a better solution. My tests with `rsync` caused file deletions during synchronization, which my script avoids but still produces error messages (see [log example](container-logs_example.txt), lines 20-24). **Please open issues only if you have a suitable solution!**
-- [ ] Publish Docker image on GHCR and Docker Hub.
 
 <br>
 
