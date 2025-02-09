@@ -40,7 +40,7 @@ function find_differences_in_directories () {
     # $3=result-list (only differents)
     # $4=compare-file is allowed to be: newer/older/identical
     # example: find_differences_in_directories $SOURCE_DIR $WEBDRIVE_DIR $COPY_LIST newer
-    find "$1" -type f -not -name '.*' | \
+    find "$1" -type f -not -name '.*' -not -path "*/lost+found/*" | \
     while read -r src_file; do
         dst_file="${2}${src_file#$1}"
 
@@ -76,7 +76,7 @@ find_different_directories $SOURCE_DIR $WEBDRIVE_DIR $DIRECTORY_CREATION_LIST
 if (( $(stat -c%s "$DIRECTORY_CREATION_LIST") == 0 )); then
     echo "no directory to create" >> "$Logfile"
 else
-    echo "Folder creation:"
+    echo "Folder creation:" >> "$Logfile"
 fi
 
 IFS=$'\n'
@@ -91,7 +91,7 @@ find_differences_in_directories $SOURCE_DIR $WEBDRIVE_DIR $COPY_LIST newer
 if (( $(stat -c%s "$COPY_LIST") == 0 )); then
     echo "no file to copy" >> "$Logfile"
 else
-    echo "File copy:"
+    echo "File copy:" >> "$Logfile"
 fi
 
 IFS=$'\n'
@@ -106,7 +106,7 @@ find_differences_in_directories $WEBDRIVE_DIR $SOURCE_DIR $DELETE_LIST older
 if (( $(stat -c%s "$DELETE_LIST") == 0 )); then
     echo "no file to remove" >> "$Logfile"
 else
-    echo "File removal:"
+    echo "File removal:" >> "$Logfile"
 fi
 
 IFS=$'\n'
@@ -123,7 +123,7 @@ find_different_directories $WEBDRIVE_DIR $SOURCE_DIR $DIRECTORY_DELETATION_LIST
 if (( $(stat -c%s "$DIRECTORY_DELETATION_LIST") == 0 )); then
     echo "no directory to remove" >> "$Logfile"
 else
-    echo "Folder removal:"
+    echo "Folder removal:" >> "$Logfile"
 fi
 
 IFS=$'\n'

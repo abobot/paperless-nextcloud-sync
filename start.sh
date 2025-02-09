@@ -83,11 +83,11 @@ while IFS='|' read -r event full_path filename; do
   RELATIVE_PATH="${full_path/${SOURCE_DIR}\//''}"
   case "$event" in
     MODIFY|CREATE)
-      echo "[ACTION] Detected $event-Event - Copying: $filename"
+      echo "[ACTION] Detected $event-Event - Copying file: $filename"
       cp "$SOURCE_DIR/$RELATIVE_PATH" "$WEBDRIVE_DIR/$RELATIVE_PATH" --verbose
       ;;
     DELETE)
-      echo "[ACTION] Detected $event-Event - Deleting: $filename"
+      echo "[ACTION] Detected $event-Event - Deleting file: $filename"
       rm "$WEBDRIVE_DIR/$RELATIVE_PATH" --verbose
       ;;
     CREATE,ISDIR)
@@ -104,7 +104,7 @@ while IFS='|' read -r event full_path filename; do
       OLD_PATH_WEBDRIVE="$WEBDRIVE_DIR/$RELATIVE_PATH"
       ;;
     MOVED_TO)
-      echo "[ACTION] Detected $event-Event - File moved: $RELATIVE_PATH"
+      echo "[ACTION] Detected $event-Event - Moving file: $RELATIVE_PATH"
       #NEW_PATH_LOCAL="$SOURCE_DIR/$RELATIVE_PATH"
       NEW_PATH_WEBDRIVE="$WEBDRIVE_DIR/$RELATIVE_PATH"
       if [[ -n "$OLD_PATH_WEBDRIVE" ]]; then
