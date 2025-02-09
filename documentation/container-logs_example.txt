@@ -1,0 +1,47 @@
+/bin/bash: warning: setlocale: LC_ALL: cannot change locale (de_DE.UTF-8)
+/bin/bash: warning: setlocale: LC_ALL: cannot change locale (de_DE.UTF-8)
+Generating locales (this might take a while)...
+  de_DE.UTF-8... done
+Generation complete.
+[INFO] WEBDRIVE_URL: http://192.168.178.198:5002/remote.php/dav/files/Scanner/03_Paperless_archive
+[INFO] WEBDRIVE_USER: Scanner
+mount.davfs: warning: the server does not support locks
+[INFO] Start completed. Start initital syncronization and filewatcher
+====================================================================================================
+Setting up watches.  Beware: since -r was given, this may take a while!
+Watches established.
+[ACTION] Detected CREATE-Event - Copying: 2024 - 2024-12-28_10-52-01_mobile-scan.pdf
+'/mnt/source/Haus/2024 - 2024-12-28_10-52-01_mobile-scan.pdf' -> '/mnt/webdrive/Haus/2024 - 2024-12-28_10-52-01_mobile-scan.pdf'
+[ACTION] Detected MODIFY-Event - Copying: 2024 - 2024-12-28_10-52-01_mobile-scan.pdf
+'/mnt/source/Haus/2024 - 2024-12-28_10-52-01_mobile-scan.pdf' -> '/mnt/webdrive/Haus/2024 - 2024-12-28_10-52-01_mobile-scan.pdf'
+[INFO] Detected MOVED_FROM-Event - File moved: Haus/2024 - 2024-12-28_10-52-01_mobile-scan.pdf
+[ACTION] Detected MOVED_TO-Event - File moved: 2024/2024-12-28 none - Info-Material.pdf
+renamed '/mnt/webdrive/Haus/2024 - 2024-12-28_10-52-01_mobile-scan.pdf' -> '/mnt/webdrive/2024/2024-12-28 none - Info-Material.pdf'
+stat: cannot statx '/mnt/webdrive/Haus/2024 - 2024-12-28_10-52-01_mobile-scan.pdf': No such file or directory
+stat: cannot statx '/mnt/webdrive/Haus/2024 - 2024-12-28_10-52-01_mobile-scan.pdf': No such file or directory
+sync.sh: line 61: ((: != 162188 : syntax error: operand expected (error token is "!= 162188 ")
+sync.sh: line 61: ((: < 1726986498 : syntax error: operand expected (error token is "< 1726986498 ")
+----------------------------------------------------------------------------------------------------
+[INFO] Initial synchronization completed. RESULTS:
+no folder to create
+File copy:
+'/mnt/source/2024/2024-02-29 none - sample-invoice.pdf' -> '/mnt/webdrive/2024/2024-02-29 none - sample-invoice.pdf'
+'/mnt/source/2016/2016-01-25 none - wordpress-pdf-invoice-plugin-sample.pdf' -> '/mnt/webdrive/2016/2016-01-25 none - wordpress-pdf-invoice-plugin-sample.pdf'
+no file to remove
+no folder to remove
+----------------------------------------------------------------------------------------------------
+[INFO] Detected MOVED_FROM-Event - File moved: 2024/2024-02-29 none - sample-invoice.pdf
+[ACTION] Detected MOVED_TO-Event - File moved: 2024/2024-03-01 none - sample-invoice.pdf
+renamed '/mnt/webdrive/2024/2024-02-29 none - sample-invoice.pdf' -> '/mnt/webdrive/2024/2024-03-01 none - sample-invoice.pdf'
+[INFO] Detected MOVED_FROM-Event - File moved: 2024/2024-03-01 none - sample-invoice.pdf
+[ACTION] Detected MOVED_TO-Event - File moved: 2024/2024-03-01 Software Company - Invoice WMACCESS Internet.pdf
+renamed '/mnt/webdrive/2024/2024-03-01 none - sample-invoice.pdf' -> '/mnt/webdrive/2024/2024-03-01 Software Company - Invoice WMACCESS Internet.pdf'
+[INFO] Detected MOVED_FROM-Event - File moved: 2016/2016-01-25 none - wordpress-pdf-invoice-plugin-sample.pdf
+[ACTION] Detected MOVED_TO-Event - File moved: 2016/2016-01-25 Software Company - wordpress WebDesign.pdf
+renamed '/mnt/webdrive/2016/2016-01-25 none - wordpress-pdf-invoice-plugin-sample.pdf' -> '/mnt/webdrive/2016/2016-01-25 Software Company - wordpress WebDesign.pdf'
+[ACTION] Detected DELETE-Event - Deleting: 2024-12-28 none - Info-Material.pdf
+removed '/mnt/webdrive/2024/2024-12-28 none - Info-Material.pdf'
+[ACTION] Detected DELETE-Event - Deleting: 2024-03-01 Software Company - Invoice WMACCESS Internet.pdf
+removed '/mnt/webdrive/2024/2024-03-01 Software Company - Invoice WMACCESS Internet.pdf'
+[ACTION] Detected DELETE-Event - Deleting: 2016-01-25 Software Company - wordpress WebDesign.pdf
+removed '/mnt/webdrive/2016/2016-01-25 Software Company - wordpress WebDesign.pdf'
