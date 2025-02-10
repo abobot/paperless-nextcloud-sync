@@ -108,18 +108,29 @@ while IFS='|' read -r event full_path filename; do
       echo "[ACTION] Detected $event-Event - Moving file: $RELATIVE_PATH"
       #NEW_PATH_LOCAL="$SOURCE_DIR/$RELATIVE_PATH"
       NEW_PATH_WEBDRIVE="$WEBDRIVE_DIR/$RELATIVE_PATH"
-      if [[ -n "$OLD_PATH_WEBDRIVE" ]]; then
-        mv "$OLD_PATH_WEBDRIVE" "$NEW_PATH_WEBDRIVE" --verbose
-        #NEW_PATH_LOCAL=""
-        NEW_PATH_WEBDRIVE=""
+      if [[ -n "$OLD_PATH_WEBDRIVE" && -f "$OLD_PATH_WEBDRIVE" ]]; then
+          mv "$OLD_PATH_WEBDRIVE" "$NEW_PATH_WEBDRIVE" --verbose
+          #NEW_PATH_LOCAL=""
       else
-        echo "[ERROR] Variable \"OLD_PATH_WEBDRIVE\" not set"
+        if [[ ! -n "$OLD_PATH_WEBDRIVE" ]]; then
+          echo "[WARNING] Variable \"OLD_PATH_WEBDRIVE\" not set! Copying as new file!"
+        fi
+        if [[ ! -f "$OLD_PATH_WEBDRIVE" ]]; then
+          echo "[WARNING] File $filename does not exist! Copying as new file!"
+        fi
+        cp "$SOURCE_DIR/$RELATIVE_PATH" "$WEBDRIVE_DIR/$RELATIVE_PATH" --verbose
+        echo "[INFO] Start complete sync run to fix other potential failures"
+        /bin/bash sync.sh "$SOURCE_DIR" "$WEBDRIVE_DIR" "missed-events" &
+        # usage sync.sh: $1 = source | $2 = destination | $3 = reason
       fi
+      unset OLD_PATH_WEBDRIVE
+      unset NEW_PATH_WEBDRIVE
       ;;
     *)
       echo "[ERROR] Unknown $event-Event for $filename"
       echo "Full path: $full_path"
       ;;
   esac
+  unset RELATIVE_PATH
 done &
 wait
