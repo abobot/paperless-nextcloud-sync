@@ -73,7 +73,8 @@ echo "==========================================================================
 
 # initial synchronization, perfomed in background
 # this script prints output in container logs, when finished
-nohup bash sync.sh "$SOURCE_DIR" "$WEBDRIVE_DIR" &
+# usage sync.sh: $1 = source | $2 = destination | $3 = reason
+/bin/bash sync.sh "$SOURCE_DIR" "$WEBDRIVE_DIR" "container-start" &
 
 
 # setting up filewatcher and actions for for high-performance instant synchronization per-event

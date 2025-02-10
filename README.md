@@ -53,13 +53,12 @@ Synchronization is unidirectional (**Paperless ➔ Nextcloud**) to ensure Paperl
    ```
 3. Add the container to your Paperless stack using Docker Compose:
    ```yaml
-   version: "3"
-
    services:
      nc-sync:
        image: paperless-nextcloud-sync
        volumes:
          - "/mnt/data/paperless_data/Document_Library/documents/archive:/mnt/source:ro"
+         - "./nc-sync_logs/:/var/log/"
        environment:
          WEBDRIVE_URL: $NEXTCLOUD_URL
          WEBDRIVE_USER: $NEXTCLOUD_USER

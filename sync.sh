@@ -1,14 +1,18 @@
 #!/bin/bash
 
+# usage sync.sh: $1 = source | $2 = destination | "$3" = reason
+
 
 # Variables
 SOURCE_DIR="$1"
 WEBDRIVE_DIR="$2"
-Logfile="/var/log/initial_synchronization.log"
-DIRECTORY_CREATION_LIST="/tmp/directory-creation-list.txt"
-DIRECTORY_DELETATION_LIST="/tmp/directory-deletation-list.txt"
-COPY_LIST="/tmp/file-copy-list.txt"
-DELETE_LIST="/tmp/file-delete-list.txt"
+SYNC_REASON="$3"
+DATE_TIME="$(date +%Y-%m-%d)_$(date +%H-%M-%S)"
+Logfile="/var/log/${DATE_TIME}_${SYNC_REASON}.log"
+DIRECTORY_CREATION_LIST="/tmp/${DATE_TIME}_directory-creation-list.txt"
+DIRECTORY_DELETATION_LIST="/tmp/${DATE_TIME}_directory-deletation-list.txt"
+COPY_LIST="/tmp/${DATE_TIME}_file-copy-list.txt"
+DELETE_LIST="/tmp/${DATE_TIME}_file-delete-list.txt"
 
 echo > "$Logfile"
 
@@ -40,7 +44,7 @@ function find_differences_in_directories () {
     # $3=result-list (only differents)
     # $4=compare-file is allowed to be: newer/older/identical
     # example: find_differences_in_directories $SOURCE_DIR $WEBDRIVE_DIR $COPY_LIST newer
-    find "$1" -type f -not -name '.*' -not -path "*/lost+found/*" | \
+    find "$1" -type f -not -name '.*' -not -path '*/lost+found/*' | \
     while read -r src_file; do
         dst_file="${2}${src_file#$1}"
 
@@ -145,6 +149,6 @@ rm $DELETE_LIST
 
 # print results
 echo "----------------------------------------------------------------------------------------------------"
-echo "[INFO] Initial synchronization completed. RESULTS:"
+echo "[INFO] RESULTS from full synchronization ($Logfile):"
 cat "$Logfile"
 echo "----------------------------------------------------------------------------------------------------"
