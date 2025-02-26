@@ -3,7 +3,6 @@ FROM ubuntu:latest
 RUN apt-get update \
   && apt-get install -y davfs2 ca-certificates locales inotify-tools tini \
   && mkdir -p /mnt/source \
-  && mkdir -p /mnt/compare \
   && mkdir -p /mnt/webdrive \
   && apt-get clean \
   && rm -rf /tmp/* /var/lib/apt/lists/* /var/tmp/*

@@ -2,7 +2,7 @@
 > **Note**: Ok guys, I keep this one short, since it's not the focus of this repository. Please also **do not open any issues related to the upload topic**, I will close them immediately.
 
 At first, this is my setup:
-![](documentation/my-setup_diagram-2.drawio.svg)
+![](my-setup_diagram-2.drawio.svg)
 
 The key here is the ProFTP-Container:
 ```yaml
