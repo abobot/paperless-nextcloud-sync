@@ -5,7 +5,7 @@ if [[ $LC_ALL != "en_US.UTF-8" ]]; then
   locale-gen "${LC_ALL}"
 fi
 
-# Check mandatory veriables
+# Check mandatory variables and store them to secrets file
 if [ -z ${WEBDRIVE_USER} ]; then
   echo "[ERROR] Webdrive user is not set!"
   exit 1
@@ -67,18 +67,18 @@ trap "container_exit SIGTERM" SIGTERM
 trap "container_exit SIGINT" SIGINT
 
 
-echo "[INFO] Start completed. Start initital syncronization and filewatcher"
+echo "[INFO] Start completed. Start initial synchronization and file watcher"
 echo "===================================================================================================="
 
 
-# initial synchronization, perfomed in background
+# start the initial synchronization as background job
 # this script prints output in container logs, when finished
 # usage sync.sh: $1 = source | $2 = destination | $3 = reason
 /bin/bash sync.sh "$SOURCE_DIR" "$WEBDRIVE_DIR" "container-start" &
 
 
-# setting up filewatcher and actions for for high-performance instant synchronization per-event
-# supports renaming and file-move, to preserve existing files in nextcloud (instead of delete+recreate)
+# setting up file watcher and actions for for high-performance instant synchronization per-event
+# supports renaming and file-move, to preserve existing files in Nextcloud (instead of delete+recreate)
 inotifywait -m -r -e modify,create,delete,move "$SOURCE_DIR" --format '%e|%w%f|%f' |
 while IFS='|' read -r event full_path filename; do
   RELATIVE_PATH="${full_path/${SOURCE_DIR}\//''}"
@@ -101,22 +101,19 @@ while IFS='|' read -r event full_path filename; do
       ;;
     MOVED_FROM)
       echo "[INFO] Detected $event-Event - File moved: $RELATIVE_PATH"
-      #OLD_PATH_LOCAL="$SOURCE_DIR/$RELATIVE_PATH"
       OLD_PATH_WEBDRIVE="$WEBDRIVE_DIR/$RELATIVE_PATH"
       ;;
     MOVED_TO)
       echo "[ACTION] Detected $event-Event - Moving file: $RELATIVE_PATH"
-      #NEW_PATH_LOCAL="$SOURCE_DIR/$RELATIVE_PATH"
       NEW_PATH_WEBDRIVE="$WEBDRIVE_DIR/$RELATIVE_PATH"
       if [[ -n "$OLD_PATH_WEBDRIVE" && -f "$OLD_PATH_WEBDRIVE" ]]; then
           mv "$OLD_PATH_WEBDRIVE" "$NEW_PATH_WEBDRIVE" --verbose
-          #NEW_PATH_LOCAL=""
       else
         if [[ ! -n "$OLD_PATH_WEBDRIVE" ]]; then
           echo "[WARNING] Variable \"OLD_PATH_WEBDRIVE\" not set! Copying as new file!"
         fi
         if [[ ! -f "$OLD_PATH_WEBDRIVE" ]]; then
-          echo "[WARNING] File $filename does not exist! Copying as new file!"
+          echo "[WARNING] File from MOVED_FROM event does not exist! Copying as new file!"
         fi
         cp "$SOURCE_DIR/$RELATIVE_PATH" "$WEBDRIVE_DIR/$RELATIVE_PATH" --verbose
         echo "[INFO] Start complete sync run to fix other potential failures"

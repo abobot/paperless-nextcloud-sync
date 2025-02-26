@@ -21,8 +21,8 @@ echo > "$Logfile"
 function find_different_directories () {
     # Compares each directory in path $1 to directories in path $2 and write different to result-list $3
     # $1=directory to search through
-    # $2=directory to campare with
-    # $3=result-list (only differents)
+    # $2=directory to compare with
+    # $3=result-list (only differences)
     # example: find_different_directories $SOURCE_DIR $WEBDRIVE_DIR $DIRECTORY_CREATION_LIST
     find "$1" -type d -not -path '*/lost+found' | \
     while read -r src_dir; do
@@ -40,8 +40,8 @@ function find_differences_in_directories () {
     # Compares each file in path $1 to files in path $2 and write different to result-list $3
     # the compare logic can be defined in $4: newer/older/identical
     # $1=directory to search through
-    # $2=directory to campare with
-    # $3=result-list (only differents)
+    # $2=directory to compare with
+    # $3=result-list (only differences)
     # $4=compare-file is allowed to be: newer/older/identical
     # example: find_differences_in_directories $SOURCE_DIR $WEBDRIVE_DIR $COPY_LIST newer
     find "$1" -type f -not -name '.*' -not -path '*/lost+found/*' | \
